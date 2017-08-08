@@ -3,6 +3,7 @@
 import argparse
 import sys
 import time
+import random
 
 import twitter
 import schedule
@@ -134,18 +135,24 @@ def add_subject_to_used_file(subject):
 
 DEBUG_MODE = False
 def post_next_tweet():
-    subject = subjects.pop(0)
-    tweet = subject + 'Horny'
-    if not DEBUG_MODE:
-        if twitter_api != None:
-            twitter_api.PostUpdate(tweet)
+    try:
+        subject = random.choice(subjects)
+        tweet = subject + 'Horny'
+        if not DEBUG_MODE:
+            if twitter_api != None:
+                try:
+                    twitter_api.PostUpdate(tweet)
+                except TwitterError:
+                    print('WARNING: Unable to tweet: "' + tweet + '"')
+            else:
+                print('WARNING: Unable to tweet: "' + tweet + '"')
         else:
-            print('WARNING: Unable to tweet: "' + tweet + '"')
-    else:
-        print('DEBUG: Would have tweeted: "' + tweet + '"')
-    add_subject_to_used_file(subject)
-    if len(subjects) == 0:
-        sys.exit('Ran out of subjects.')
+            print('DEBUG: Would have tweeted: "' + tweet + '"')
+        add_subject_to_used_file(subject)
+        if len(subjects) == 0:
+            sys.exit('Ran out of subjects.')
+    except IndexError:
+        sys.exit('No more subjects to tweet.')
 
 def begin_loop():
     print('Entering loop...')
