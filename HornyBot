@@ -137,7 +137,7 @@ DEBUG_MODE = False
 def post_next_tweet():
     try:
         subject = random.choice(subjects)
-        tweet = subject + 'Horny'
+        tweet = subject + '-Horny'
         if not DEBUG_MODE:
             if twitter_api != None:
                 try:

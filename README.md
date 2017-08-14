@@ -43,7 +43,7 @@ Config files are read once the bot is started and then ignored, so changes to th
 
 ### Subjects File
 
-A list of subjects, one per line, about which the bot is horny. These will be tweeted in random order. The subjects will be appended with "Horny" (without a space) before being tweeted.
+A list of subjects, one per line, about which the bot is horny. These will be tweeted in random order. The subjects will be appended with "-Horny" before being tweeted.
 
 ### Schedule File
 
