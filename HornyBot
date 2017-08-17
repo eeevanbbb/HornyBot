@@ -29,9 +29,10 @@ def format_error(e):
     return '(' + e.message + ')'
 
 twitter_api = None
-twitter_user = None
 
 def config_twitter_api(twitter_file):
+    global twitter_api
+    twitter_user = None
     twitter_keys = {}
     try:
         with open(twitter_file) as f:
