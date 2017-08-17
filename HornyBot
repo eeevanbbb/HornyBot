@@ -25,6 +25,8 @@ class new_out:
             old_out.write(x)
 sys.stdout = new_out()
 
+def format_error(e):
+    return '(' + e.message + ')'
 
 twitter_api = None
 twitter_user = None
@@ -36,8 +38,8 @@ def config_twitter_api(twitter_file):
             for line in f:
                 name, var = line.split('=')
                 twitter_keys[name.strip()] = var.strip()
-    except IOError:
-        sys.exit('Could not find twitter config file at: ' + twitter_file)
+    except IOError as e:
+        sys.exit('Could not find twitter config file at: ' + twitter_file + format_error(e))
 
     consumer_key = twitter_keys.get('consumer_key')
     consumer_secret = twitter_keys.get('consumer_secret')
@@ -59,8 +61,8 @@ def config_twitter_api(twitter_file):
                                   access_token_secret=access_secret)
         try:
             twitter_user = twitter_api.VerifyCredentials()
-        except twitter.TwitterError:
-            sys.exit('Could not verify twitter credentials.')
+        except twitter.TwitterError as e:
+            sys.exit('Could not verify twitter credentials.' + format_error(e))
 
         if twitter_user == None:
             sys.exit('Could not verify twitter credentials.')
@@ -75,8 +77,8 @@ def load_subjects(subjects_file):
         with open(subjects_file) as f:
             for line in f:
                 subjects.append(line.rstrip('\n'))
-    except IOError:
-        sys.exit('Could not find subjects file at: ' + subjects_file)
+    except IOError as e:
+        sys.exit('Could not find subjects file at: ' + subjects_file + format_error(e))
     print('Subjects loaded successfully. (' + str(len(subjects)) + ' subjects)')
 
 
@@ -87,8 +89,8 @@ def load_used(used_file):
                 subject = line.rstrip('\n')
                 if subject in subjects:
                     subjects.remove(subject)
-    except IOError:
-        print('Could not find used subjects file at: ' + used_file)
+    except IOError as e:
+        print('Could not find used subjects file at: ' + used_file + format_error(e))
     print('Used subjects removed from list. (' + str(len(subjects)) + ' subjects)')   
 
 
@@ -113,8 +115,8 @@ def load_schedule(schedule_file):
                     schedule_times.append(time)
                 else:
                     print('Could not parse time: ' + time)
-    except IOError:
-        sys.exit('Could not find schedule file at: ' + schedule_file)
+    except IOError as e:
+        sys.exit('Could not find schedule file at: ' + schedule_file + format_error(e))
     print('Schedule loaded successfully. (' + str(len(schedule_times)) + ' times scheduled)')
 
 
@@ -129,8 +131,8 @@ def add_subject_to_used_file(subject):
     try:
         with open(used_file, 'a') as f:
             f.write(subject + '\n')
-    except IOError:
-        print('WARNING: Could not write to used subjects file.')
+    except IOError as e:
+        print('WARNING: Could not write to used subjects file.' + format_error(e))
 
 
 DEBUG_MODE = False
@@ -142,8 +144,8 @@ def post_next_tweet():
             if twitter_api != None:
                 try:
                     twitter_api.PostUpdate(tweet)
-                except TwitterError:
-                    print('WARNING: Unable to tweet: "' + tweet + '"')
+                except TwitterError as e:
+                    print('WARNING: Unable to tweet: "' + tweet + '"' + format_error(e))
             else:
                 print('WARNING: Unable to tweet: "' + tweet + '"')
         else:
@@ -151,8 +153,8 @@ def post_next_tweet():
         add_subject_to_used_file(subject)
         if len(subjects) == 0:
             sys.exit('Ran out of subjects.')
-    except IndexError:
-        sys.exit('No more subjects to tweet.')
+    except IndexError as e:
+        sys.exit('No more subjects to tweet.' + format_error(e))
 
 def begin_loop():
     print('Entering loop...')
